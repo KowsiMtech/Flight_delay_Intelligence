@@ -1,0 +1,12 @@
+[project]
+name = "flight_delay_dbt"
+version = "0.1.0"
+description = "dbt project for flight delay intelligence"
+requires-python = ">=3.8"
+
+[tool.uv]
+# uv-specific settings can go here
+
+[project.dependencies]
+dbt-databricks = "*"
+pandas = "*"

@@ -1,0 +1,293 @@
+# models/schema.yml
+# dbt tests 
+
+version: 2
+
+models:
+
+  # --- STAGING ---
+
+  - name: stg_flights
+    description: "Staging view on Silver flights Delta table."
+    columns:
+      - name: flight_id
+        description: "Flight surrogate key"
+        tests:
+          - not_null
+          - unique
+
+      - name: carrier
+        description: "Airline carrier code"
+        tests:
+          - not_null
+
+      - name: origin
+        description: "Origin airport code"
+        tests:
+          - not_null
+
+      - name: dest
+        description: "Destination airport code"
+        tests:
+          - not_null
+
+      - name: flight_date
+        description: "Flight date"
+        tests:
+          - not_null
+
+      - name: tail_number
+        description: "Aircraft tail number"
+        tests:
+          - not_null
+
+      - name: is_delayed
+        description: "TRUE if arrival delay >= 15 minutes"
+        tests:
+          - not_null
+
+  - name: stg_weather
+    description: "Staging view on Silver weather Delta table."
+    columns:
+      - name: airport_code
+        description: "Airport code"
+        tests:
+          - not_null
+
+      - name: weather_date
+        description: "Date of weather observation"
+        tests:
+          - not_null
+
+      - name: weather_severity
+        description: "Severity classification of weather"
+        tests:
+          - not_null
+
+  - name: stg_airports
+    description: "Airport codes derived from Silver flights table."
+    columns:
+      - name: airport_code
+        description: "Airport code - primary key"
+        tests:
+          - not_null
+          - unique
+
+      - name: airport_name
+        description: "Airport name"
+        tests:
+          - not_null
+
+  # --- DIMENSIONS ---
+
+  - name: dim_airline
+    description: "Airline dimension with carrier performance stats."
+    columns:
+      - name: airline_code
+        description: "Airline carrier code - primary key"
+        tests:
+          - not_null
+          - unique
+
+      - name: airline_name
+        description: "Airline name"
+        tests:
+          - not_null
+
+      - name: total_flights
+        description: "Total number of flights for this carrier"
+        tests:
+          - not_null
+
+      - name: avg_dep_delay
+        description: "Average departure delay in minutes"
+        tests:
+          - not_null
+
+      - name: avg_arr_delay
+        description: "Average arrival delay in minutes"
+        tests:
+          - not_null
+
+  - name: dim_airport
+    description: "Airport dimension with weather context."
+    columns:
+      - name: airport_code
+        description: "Airport code - primary key"
+        tests:
+          - not_null
+          - unique
+
+      - name: airport_name
+        description: "Airport name"
+        tests:
+          - not_null
+
+  # --- FACTS ---
+
+  - name: fact_flight_delays
+    description: "Core flight fact table. One row per flight."
+    columns:
+      - name: flight_id
+        description: "Surrogate key - unique per flight"
+        tests:
+          - not_null
+          - unique
+
+      - name: flight_date
+        description: "Flight date"
+        tests:
+          - not_null
+
+      - name: carrier
+        description: "Carrier code"
+        tests:
+          - not_null
+
+      - name: origin
+        description: "Origin airport code"
+        tests:
+          - not_null
+
+      - name: dest
+        description: "Destination airport code"
+        tests:
+          - not_null
+
+      - name: arr_delay
+        description: "Arrival delay in minutes"
+
+      - name: dep_delay
+        description: "Departure delay in minutes"
+
+      - name: is_delayed
+        description: "TRUE if flight was delayed"
+        tests:
+          - not_null
+
+  - name: fact_delay_cascade
+    description: "Cascade delay detection by aircraft tail number."
+    columns:
+      - name: cascade_id
+        description: "Surrogate key for cascade record"
+        tests:
+          - not_null
+          - unique
+
+      - name: tail_number
+        description: "Aircraft tail number"
+        tests:
+          - not_null
+
+      - name: is_cascade_delay
+        description: "TRUE if delay was caused by previous flight being late"
+        tests:
+          - not_null
+
+      - name: cascade_severity
+        description: "Cascade delay severity category"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 'Severe (>60 min)'
+                  - 'Moderate (30-60 min)'
+                  - 'Minor (15-30 min)'
+                  - 'None'
+
+  # --- MARTS ---
+
+  - name: mart_carrier_performance
+    description: "Monthly carrier KPIs for Power BI."
+    columns:
+      - name: carrier
+        description: "Carrier code"
+        tests:
+          - not_null
+
+      - name: flight_year
+        description: "Year of flights"
+        tests:
+          - not_null
+
+      - name: flight_month
+        description: "Month of flights (1-12)"
+        tests:
+          - not_null
+
+      - name: total_flights
+        description: "Total flights in period"
+        tests:
+          - not_null
+
+      - name: delay_rate_pct
+        description: "Percentage of delayed flights"
+        tests:
+          - not_null
+
+      - name: cancellation_rate_pct
+        description: "Percentage of cancelled flights"
+        tests:
+          - not_null
+
+  - name: mart_airport_operations
+    description: "Monthly airport operations KPIs."
+    columns:
+      - name: airport_code
+        description: "Airport code"
+        tests:
+          - not_null
+
+      - name: flight_year
+        description: "Year"
+        tests:
+          - not_null
+
+      - name: flight_month
+        description: "Month"
+        tests:
+          - not_null
+
+      - name: total_departures
+        description: "Total departures from airport"
+        tests:
+          - not_null
+
+      - name: delay_rate_pct
+        description: "Percentage of delayed departures"
+        tests:
+          - not_null
+
+  - name: mart_delay_weather_correlation
+    description: "Weather vs delay correlation for Power BI."
+    columns:
+      - name: origin
+        description: "Airport code"
+        tests:
+          - not_null
+
+      - name: flight_year
+        description: "Year"
+        tests:
+          - not_null
+
+      - name: flight_month
+        description: "Month"
+        tests:
+          - not_null
+
+      - name: weather_severity
+        description: "Weather severity classification"
+        tests:
+          - not_null
+
+      - name: total_flights
+        description: "Total flights in this weather condition"
+        tests:
+          - not_null
+
+      - name: avg_dep_delay_min
+        description: "Average departure delay in minutes"
+        tests:
+          - not_null
