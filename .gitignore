@@ -1,0 +1,19 @@
+# Sensitive files and directories
+.env
+.venv312/
+dataset/
+logs/
+flight_delay_dbt/logs/
+target/
+flight_delay_dbt/target/
+dbt_packages/
+__pycache__/
+*.pyc
+# OS and editor files
+.DS_Store
+*.swp
+*.swo
+# Jupyter and notebook checkpoints
+.ipynb_checkpoints/
+# User-specific files
+.user.yml
