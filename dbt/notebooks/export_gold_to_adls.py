@@ -2,7 +2,7 @@
 # Purpose : Export all dbt Gold tables from Databricks → ADLS Gen2 as Parquet
 # Run after: dbt run completes successfully
 
-# ── CELL 1: CONFIG ──────────────────────────────────────────────
+# CONFIG 
 CATALOG       = 'flight_catalog'
 GOLD_SCHEMA   = 'gold_gold'
 STORAGE_ACCT  = 'flightanalyticsadls'
@@ -23,7 +23,7 @@ GOLD_TABLES = [
 print(f'Export destination: {GOLD_PATH}')
 print(f'Tables to export  : {len(GOLD_TABLES)}')
 
-# ── CELL 2: EXPORT FUNCTION ─────────────────────────────────────
+# EXPORT FUNCTION 
 from datetime import datetime
 
 def export_table_to_adls(table_name, gold_path, mode='overwrite'):
@@ -63,7 +63,7 @@ def export_table_to_adls(table_name, gold_path, mode='overwrite'):
         return {'table': table_name, 'rows': 0, 'status': 'failed', 'error': str(e)}
 
 
-# ── CELL 3: RUN EXPORT ──────────────────────────────────────────
+# RUN EXPORT 
 print(f'Starting Gold export at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 print(f'Destination: {GOLD_PATH}')
 
@@ -72,7 +72,7 @@ for table in GOLD_TABLES:
     result = export_table_to_adls(table, GOLD_PATH)
     results.append(result)
 
-# ── CELL 4: SUMMARY ─────────────────────────────────────────────
+# SUMMARY 
 print('\n' + '='*50)
 print('EXPORT SUMMARY')
 print('='*50)
@@ -90,13 +90,13 @@ print(f'Success: {len(success)} tables')
 print(f'Failed : {len(failed)} tables')
 print(f'Finished at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
-# ── CELL 5: VERIFY FILES IN ADLS ────────────────────────────────
+#  VERIFY FILES IN ADLS
 print('\nVerifying files in ADLS:')
 for table in GOLD_TABLES:
     path = f'{GOLD_PATH}/{table}/'
     try:
         files = dbutils.fs.ls(path)
         parquet_files = [f for f in files if f.name.endswith('.parquet') or f.name.startswith('part-')]
-        print(f'✅ {table:<40} {len(parquet_files)} parquet files')
+        print(f' {table:<40} {len(parquet_files)} parquet files')
     except Exception as e:
-        print(f'❌ {table:<40} NOT FOUND')
+        print(f' {table:<40} NOT FOUND')

@@ -11,7 +11,7 @@ from azure.identity import DefaultAzureCredential
 ADLS_ACCOUNT_NAME = "flightanalyticsadls"
 ADLS_FILESYSTEM   = "flight-data"                    # updated to match ADLS container
 KAFKA_BROKER      = os.getenv("KAFKA_BROKER", "localhost:9092")
-TOPICS            = ["flight-events", "weather-events"]
+TOPICS            = ["weather-events"]
 DEMO_MODE         = os.getenv("DEMO_MODE", "false").lower() == "true"
 DEMO_LIMIT        = 100
 
