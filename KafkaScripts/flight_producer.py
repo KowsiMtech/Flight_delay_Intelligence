@@ -1,6 +1,6 @@
 """
 flight_producer.py
-BTS CSV → Kafka (flight-events topic)
+BTS CSV to Kafka (flight-events topic)
 Streams all BTS flight records. Carrier/airport filtering happens in Silver DLT.
 Place your BTS CSV files in /data/bts/ before running.
 """

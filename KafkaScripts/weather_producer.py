@@ -1,6 +1,6 @@
 """
 weather_producer.py
-OpenMeteo API → Kafka (weather-events topic)
+OpenMeteo API to Kafka (weather-events topic)
 Polls weather every 5 minutes for your 5 focus airports.
 Free API — no key required.
 """

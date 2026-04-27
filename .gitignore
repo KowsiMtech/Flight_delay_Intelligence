@@ -17,3 +17,27 @@ __pycache__/
 .ipynb_checkpoints/
 # User-specific files
 .user.yml
+# Additional sensitive/system files
+*.key
+*.pem
+*.pfx
+*.crt
+*.der
+id_rsa*
+id_ed25519*
+*.db
+*.sqlite
+*.bak
+*.log
+*.pkl
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.json
+*.yml
+*.yaml
+settings.json
+*.pbix
+Thumbs.db
+secrets.*
