@@ -1,7 +1,5 @@
 # Real-Time Flight Delay Intelligence Platform
 
-![Dashboard Screenshot](powerbi/dashboard_screenshot.png)
-
 ## North American Aviation Analytics on Databricks
 
 **End-to-End Data Engineering Project**  
@@ -52,7 +50,7 @@ Flight delays are a major operational and financial challenge for airlines. Each
 - **OpenMeteo API:** Real-time weather enrichment
 
 ## Architecture Overview
-![Architecture](architecture/architecture.png)
+![Architecture](architecture/flight_intelligence_architecture.png)
 
 ## Pipeline Flow
 1. **Data Sources:** BTS and OpenMeteo (Raw CSV + API)
